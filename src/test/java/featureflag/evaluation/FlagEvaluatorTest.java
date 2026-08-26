@@ -9,6 +9,7 @@ import featureflag.model.PercentageRollout;
 import featureflag.model.TargetingRule;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -224,5 +225,109 @@ class FlagEvaluatorTest {
                 .valueType(FlagValueType.INTEGER)
                 .defaultValue(FlagValue.ofInteger(defaultValue))
                 .build();
+    }
+
+    @Test
+    void stringFlagReturnsEnabledWhenUserFallsWithinFiftyPercentRollout() {
+        PercentageBucketer bucketer = new PercentageBucketer() {
+            @Override
+            public int bucket(String hashInput) {
+                return 25;
+            }
+        };
+
+        FlagEvaluator evaluator =
+                new FlagEvaluator(new RuleMatcher(), bucketer);
+
+        FlagConfig config = FlagConfig.builder()
+                .name("new-checkout")
+                .environment("prod")
+                .valueType(FlagValueType.STRING)
+                .defaultValue(FlagValue.ofString("disabled"))
+                .rules(Collections.emptyList())
+                .rollout(new PercentageRollout(
+                        50,
+                        null,
+                        FlagValue.ofString("enabled")))
+                .build();
+
+        EvaluationContext context = EvaluationContext.builder()
+                .userId("india-user")
+                .attr("country", "IN")
+                .build();
+
+        EvaluationResult result = evaluator.evaluate(config, context);
+
+        assertEquals("enabled", result.value().asString());
+        assertEquals(EvaluationReason.PERCENTAGE_IN, result.reason());
+    }
+
+    @Test
+    void stringFlagReturnsEnabledWhenUserFallsWithinFiftyPercentRollout2() {
+        PercentageBucketer bucketer = new PercentageBucketer() {
+            @Override
+            public int bucket(String hashInput) {
+                return 25;
+            }
+        };
+
+        FlagEvaluator evaluator =
+                new FlagEvaluator(new RuleMatcher(), bucketer);
+
+        FlagConfig config = FlagConfig.builder()
+                .name("new-checkout")
+                .environment("prod")
+                .valueType(FlagValueType.STRING)
+                .defaultValue(FlagValue.ofString("disabled"))
+                .rules(Collections.emptyList())
+                .rollout(new PercentageRollout(
+                        50,
+                        null,
+                        FlagValue.ofString("enabled")))
+                .build();
+
+        EvaluationContext context = EvaluationContext.builder()
+                .userId("india-user")
+                .attr("country", "IN")
+                .build();
+
+        EvaluationResult result = evaluator.evaluate(config, context);
+
+        assertEquals("enabled", result.value().asString());
+        assertEquals(EvaluationReason.PERCENTAGE_IN, result.reason());
+    }
+
+    @Test
+    void indiaUserGetsEnabledForFiftyPercentRollout() {
+        PercentageBucketer bucketer = new PercentageBucketer() {
+            @Override
+            public int bucket(String hashInput) {
+                return 67;
+            }
+        };
+
+        FlagEvaluator evaluator =
+                new FlagEvaluator(new RuleMatcher(), bucketer);
+
+        FlagConfig config = FlagConfig.builder()
+                .name("new-checkout")
+                .environment("prod")
+                .valueType(FlagValueType.STRING)
+                .defaultValue(FlagValue.ofString("disabled"))
+                .rules(Collections.emptyList())
+                .rollout(new PercentageRollout(
+                        50,
+                        null,
+                        FlagValue.ofString("enabled")))
+                .build();
+
+        EvaluationContext context = EvaluationContext.builder()
+                .userId("india-user")
+                .attr("country", "IN")
+                .build();
+
+        EvaluationResult result = evaluator.evaluate(config, context);
+
+        assertEquals("enabled", result.value().asString());
     }
 }

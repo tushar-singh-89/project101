@@ -5,11 +5,7 @@ import featureflag.config.FlagConfigStore;
 import featureflag.config.InMemoryFlagConfigStore;
 import featureflag.evaluation.EvaluationResult;
 import featureflag.evaluation.FlagEvaluator;
-import featureflag.model.EvaluationContext;
-import featureflag.model.FlagConfig;
-import featureflag.model.FlagValue;
-import featureflag.model.FlagValueType;
-import featureflag.model.PercentageRollout;
+import featureflag.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -168,5 +164,62 @@ class FeatureFlagClientTest {
         public void addListener(ConfigChangeListener listener) {
             throw new UnsupportedOperationException();
         }
+    }
+
+
+    @Test
+    void evaluatesCountrySpecificRolloutsForStringFlag() {
+        InMemoryFlagConfigStore store = new InMemoryFlagConfigStore();
+
+        store.set(FlagConfig.builder()
+                .name("new-checkout")
+                .environment("prod")
+                .valueType(FlagValueType.STRING)
+                .defaultValue(FlagValue.ofString("disabled"))
+                .rules(List.of(
+                        new TargetingRule(
+                                "country",
+                                Operator.EQUALS,
+                                "IN",
+                                FlagValue.ofString("enabled"))
+                ))
+                .rollout(new PercentageRollout(
+                        50,
+                        null,
+                        FlagValue.ofString("enabled")))
+                .build());
+
+        FeatureFlagClient client =
+                new FeatureFlagClient(
+                        store,
+                        "prod",
+                        new RecordingFlagErrorLogger());
+
+        EvaluationContext indiaUser = EvaluationContext.builder()
+                .userId("user-india")
+                .attr("country", "IN")
+                .build();
+
+        EvaluationContext usUser = EvaluationContext.builder()
+                .userId("user-us")
+                .attr("country", "US")
+                .build();
+
+        EvaluationContext australiaUser = EvaluationContext.builder()
+                .userId("user-australia")
+                .attr("country", "AU")
+                .build();
+
+        assertEquals(
+                "enabled",
+                client.getString("new-checkout", indiaUser, "disabled"));
+
+        assertEquals(
+                "enabled",
+                client.getString("new-checkout", usUser, "disabled"));
+
+        assertEquals(
+                "enabled",
+                client.getString("new-checkout", australiaUser, "disabled"));
     }
 }

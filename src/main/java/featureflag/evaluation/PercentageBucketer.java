@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
-final class PercentageBucketer {
+class PercentageBucketer {
     int bucket(String hashInput) {
         Objects.requireNonNull(hashInput, "hashInput");
         try {
