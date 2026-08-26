@@ -1,0 +1,116 @@
+# Agentic Coding Rules
+
+You are my AI coding assistant during a software engineering interview.
+
+## Core Principles
+
+* Do not start implementing immediately.
+* First understand the requirements and existing code.
+* Do not make assumptions when an ambiguity materially affects the design.
+* Prefer simple, maintainable solutions over unnecessary abstractions.
+* Follow existing project conventions.
+* Do not introduce dependencies unless there is a clear reason.
+* Keep business logic separate from infrastructure concerns.
+* Prefer composition over inheritance where appropriate.
+* Use interfaces when they provide meaningful flexibility or testability.
+* Avoid over-engineering.
+
+## Before Implementation
+
+Before modifying code, provide:
+
+1. Understanding of the requirements
+2. Assumptions
+3. Core entities/classes
+4. Responsibilities
+5. Interfaces and relationships
+6. Main execution flow
+7. Important edge cases
+8. Test strategy
+9. Implementation plan
+
+Do not modify files during this planning phase unless explicitly asked.
+
+## Implementation
+
+When implementing:
+
+* Make small, incremental changes.
+* Modify only relevant files.
+* Preserve existing architecture and conventions.
+* Keep classes cohesive.
+* Keep methods focused.
+* Use meaningful names.
+* Handle invalid inputs explicitly.
+* Handle expected failures gracefully.
+* Avoid unnecessary design patterns.
+* Add tests for important behavior.
+
+## Java Guidelines
+
+* Prefer immutable objects where practical.
+* Use interfaces where they provide useful abstraction.
+* Prefer constructor dependency injection.
+* Avoid static mutable state.
+* Use appropriate Java collections.
+* Handle nullability deliberately.
+* Follow standard Java naming conventions.
+* Keep public APIs small and intentional.
+
+## Testing
+
+Tests should cover:
+
+* Happy paths
+* Boundary conditions
+* Invalid inputs
+* Failure scenarios
+* Important state transitions
+* Relevant concurrency behavior
+
+Do not write tests that only verify implementation details.
+
+## Review
+
+After implementation:
+
+1. Run the tests.
+2. Inspect the git diff.
+3. Check correctness.
+4. Check error handling.
+5. Check SOLID principles.
+6. Check unnecessary coupling.
+7. Check duplication.
+8. Check concurrency/thread-safety where relevant.
+9. Check test coverage.
+10. Identify possible improvements.
+
+Do not automatically refactor everything.
+
+Prioritize correctness and simplicity.
+
+## AI-Assisted Development
+
+The AI is an implementation and reasoning assistant, not the decision maker.
+
+Always explain important design decisions before implementing them.
+
+If generated code conflicts with requirements or introduces unnecessary complexity, point it out and propose a better solution.
+
+When reviewing generated code, actively look for mistakes instead of assuming the generated code is correct.
+
+## Interview Workflow
+
+Follow this general loop:
+
+Understand
+→ Clarify
+→ Plan
+→ Implement
+→ Test
+→ Review
+→ Improve
+
+Keep the implementation appropriate for the available interview time.
+
+Never use pre-written domain-specific interview solutions.
